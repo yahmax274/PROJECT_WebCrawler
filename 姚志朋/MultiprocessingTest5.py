@@ -3,6 +3,11 @@ from bs4 import BeautifulSoup
 import time
 import datetime
 import pandas as pd
+import numpy
+import openpyxl
+from openpyxl import load_workbook
+import concurrent.futures
+start = time.time() # 開始測量執行時間 
 #list
 type_list = []
 brand_list = []
@@ -12,8 +17,19 @@ date_list = []
 spec_list = []
 act_list = []
 all_list = []
-def main():      
-    url = "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=10604406&sourcePageType=4"
+Href_list=[]
+def ReadData():
+    fn = '3Ckey.xlsx'
+    wb = load_workbook( fn )   
+    # Work Sheet 
+    ws = wb.get_sheet_by_name( 'sheet2' )  
+    # Column 
+    column = ws[ 'A' ]   
+    mylist = [column[x].value for x in range(len(column))]
+    return mylist
+def Main(Href):      
+    # url = "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=10604406&sourcePageType=4"
+    url =Href
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"}
     re = requests.get(url,headers=headers)
     soup = BeautifulSoup(re.text,"html.parser")
@@ -97,10 +113,18 @@ def main():
     act = "null"
     act_list.append(act)
 if __name__ == '__main__':
-    start = time.time() # 開始測量執行時間 
-    main()
+    mylist=ReadData()
+    # Href=mylist[20]
+    # Main(Href)
+    for link in mylist[0:10]:##如果網址內無商品，會跳錯誤訊息
+        Href = link
+        Href_list.append(Href)
+        Main(Href)
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:executor.map(Main,Href) 
+    # with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:executor.map(Main,Href, chunksize=6)
+    # print(Href_list)
 #匯出csv檔
-for i in range(1):
+for i in range(len(Href_list)):
     all = type_list[i]+"|"+brand_list[i]+"|"+name_list[i]+"|"+price_list[i]+"|"+date_list[i]+"|"+spec_list[i]+"|"+act_list[i]
     all_list.append(all)
 raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": all_list}
@@ -108,3 +132,4 @@ df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|
 df.to_csv("momo1.csv",encoding='utf-8-Sig',index=False)
 end = time.time() # 結束測量執行時間
 print("執行時間為 %f 秒" % (end - start))
+
