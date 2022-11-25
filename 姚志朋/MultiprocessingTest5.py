@@ -8,6 +8,7 @@ import openpyxl
 from openpyxl import load_workbook
 import concurrent.futures
 import threading
+import multiprocessing as mp
 
 #list
 type_list = []
@@ -19,6 +20,17 @@ spec_list = []
 act_list = []
 all_list = []
 Href_list=[]
+def MultProcess():
+        # 同時建立及啟用10個執行緒
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        executor.map(Main, Href_list)
+    # for i in range(5): # 看要一次開幾個？先開 10 個
+    #     # p = mp.Process(target=loopvote)
+    #     p = mp.Process(target=Main, args=(Href,))
+    #     # jobs.append(p)
+    #     p.start()
+    #     p.join()
+        # WriteData()
 def WriteData():
     #匯出csv檔
     for i in range(len(Href_list)):
@@ -129,16 +141,10 @@ if __name__ == '__main__':
         Href_list.append(Href)
         #無平行處理
         # Main(Href)
-    # 同時建立及啟用10個執行緒
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:executor.map(Main, Href_list)
-    # with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    #     executor.map(Main, Href_list)
+    MultProcess()
     WriteData()
     end = time.time() # 結束測量執行時間
     print("執行時間為 %f 秒" % (end - start))
     # with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:executor.map(Main,Href, chunksize=6)
     # print(Href_list)
-
-
-
 
