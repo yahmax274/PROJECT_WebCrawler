@@ -7,6 +7,8 @@ import numpy
 import openpyxl
 from openpyxl import load_workbook
 import concurrent.futures
+import threading
+
 #list
 type_list = []
 brand_list = []
@@ -125,11 +127,15 @@ if __name__ == '__main__':
     for link in mylist[0:10]:##如果網址內無商品，會跳錯誤訊息
         Href = link
         Href_list.append(Href)
-        Main(Href)
+        #無平行處理
+        # Main(Href)
+    # 同時建立及啟用10個執行緒
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:executor.map(Main, Href_list)
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    #     executor.map(Main, Href_list)
     WriteData()
     end = time.time() # 結束測量執行時間
     print("執行時間為 %f 秒" % (end - start))
-    # with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:executor.map(Main,Href)
     # with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:executor.map(Main,Href, chunksize=6)
     # print(Href_list)
 
