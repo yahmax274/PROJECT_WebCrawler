@@ -20,15 +20,16 @@ spec_list = []
 act_list = []
 all_list = []
 Href_list=[]
-def MultProcess():
-        # 同時建立及啟用10個執行緒
+def MultThread():
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         executor.map(Main, Href_list)
-    # for i in range(5): # 看要一次開幾個？先開 10 個
-    #     # p = mp.Process(target=loopvote)
-    #     p = mp.Process(target=Main, args=(Href,))
-    #     # jobs.append(p)
-    #     p.start()
+def MultProcess():
+        # 同時建立及啟用10個執行緒
+    for i in range(5): # 看要一次開幾個？先開 10 個
+        # p = mp.Process(target=loopvote)
+        p = mp.Process(target=Main, args=(Href,))
+        # jobs.append(p)
+        p.start()
     #     p.join()
         # WriteData()
 def WriteData():
@@ -141,7 +142,8 @@ if __name__ == '__main__':
         Href_list.append(Href)
         #無平行處理
         # Main(Href)
-    MultProcess()
+    MultThread()
+    # MultProcess()
     WriteData()
     end = time.time() # 結束測量執行時間
     print("執行時間為 %f 秒" % (end - start))
