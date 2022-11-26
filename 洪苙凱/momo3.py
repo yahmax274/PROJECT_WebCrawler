@@ -137,8 +137,8 @@ def output(all_list):
 if __name__ == '__main__':
     import time
     start = time.time() # 開始測量執行時間
-    a = input('3Ckey.xlsx')
-    b = main(a,100)
-    output(b)
+    link_list = input('3Ckey.xlsx')
+    all_list = main(link_list,10)
+    output(all_list)
     end = time.time() # 結束測量執行時間
     print("執行時間為 %f 秒" % (end - start))
