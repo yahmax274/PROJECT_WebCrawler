@@ -1,6 +1,6 @@
 def MultThread():
     import concurrent.futures
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(main, Href_list)
 def MultProcess():
     import concurrent.futures
@@ -36,7 +36,7 @@ def main(link):#n為設定爬取資料筆數
     # def load_url(url, timeout):
     # with urllib.request.urlopen(url, timeout=timeout) as conn:
     #     return conn.read()
-    re = requests.get(url,headers=headers, timeout=10)
+    re = requests.get(url,headers=headers, timeout=5)
     soup = BeautifulSoup(re.text,"html.parser")
     #type
     types = soup.find_all("div",{"id":"bt_2_layout_NAV"})
@@ -153,18 +153,11 @@ if __name__ == '__main__':
     Href_list=[]
     start = time.time() # 開始測量執行時間
     link_list = input('3Ckey.xlsx')#匯入檔案名稱
-    for link in link_list[:1000]:#10為執行筆數
+    # a=((len(link_list))+1)/2
+    # print(a)
+    for link in link_list[69757:]:#10為執行筆數
         Href_list.append(link)
-        # try:
-        #     all = main(link)
-        #     all_list.append(all)
-        # except:
-        #     continue    
-    # MultThread() 
-    # with concurrent.futures.ProcessPoolExecutor() as executor:
-    #     executor.map(main,Href_list, chunksize=1000)
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(main, Href_list)
+    MultThread()
     print(len(all_list))
     output(all_list)
     end = time.time() # 結束測量執行時間
