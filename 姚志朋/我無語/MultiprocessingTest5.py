@@ -1,3 +1,4 @@
+#數量錯誤
 import requests
 from bs4 import BeautifulSoup
 import time
