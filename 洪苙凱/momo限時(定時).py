@@ -32,22 +32,20 @@ now = now.replace("-","/")
 now = now[:16]
 date = date_list[product_list[0]+1]
 if date[11:13] =="00":
-    print("預計爬取時間:23:50")
-    while int(now[11:13])!= 11 or now[14:]!="50":
+    while int(now[11:13])!= 11 or int(now[14:])<=50:
         print(now)
         time.sleep(10)
         now = str(datetime.now())
         now = now.replace("-","/")
         now = now[:16]
 else:
-    print("預計爬取時間:"+str(int(date[11:13])-1)+":50")
-    while int(now[11:13])-int(date[11:13])!= -1 or now[14:]!="50":
+    while int(now[11:13])-int(date[11:13])!= -1 or int(now[14:])<=50:
         print(now)
         time.sleep(10)
         now = str(datetime.now())
         now = now.replace("-","/")
         now = now[:16]
-print("開爬時間",now)
+print("開始時間",now)
 driver = webdriver.Chrome()
 driver.get("https://www.momoshop.com.tw/edm/cmmedm.jsp?lpn=O1K5FBOqsvN&n=1")
 brands = driver.find_elements_by_id("gdsBrand_1")
@@ -172,4 +170,4 @@ for i in range(product_list[0],product_list[0]+product_list[1]):
 raw_data ={"rush_time|item_name|market_price|sale_price|discount_price|discount|stock|big|mid|small|category|brand|date": all_list}
 df = pd.DataFrame(raw_data,columns=["rush_time|item_name|market_price|sale_price|discount_price|discount|stock|big|mid|small|category|brand|date"])
 df.to_csv("momo限時(定時).csv",encoding='utf-8-Sig',index=False)
-print("結束時間",time.ctime())
+print("結束時間:"+datetime.now().strftime('%Y/%m/%d %H:%M'))
