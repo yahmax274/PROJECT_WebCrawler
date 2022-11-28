@@ -33,9 +33,6 @@ def main(link):#n為設定爬取資料筆數
     url = link
     user_agent = UserAgent()
     headers={ 'user-agent': user_agent.random }
-    # def load_url(url, timeout):
-    # with urllib.request.urlopen(url, timeout=timeout) as conn:
-    #     return conn.read()
     re = requests.get(url,headers=headers, timeout=5)
     soup = BeautifulSoup(re.text,"html.parser")
     #type
