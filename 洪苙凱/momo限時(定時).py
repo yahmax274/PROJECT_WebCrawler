@@ -30,14 +30,23 @@ driver.quit()
 now = str(datetime.now())
 now = now.replace("-","/")
 now = now[:16]
-date = date_list[product_list[1]] 
-while int(now[11:13])-int(date[11:13])!= -1 or now[14:]!="50":
-    print(now)
-    time.sleep(10)
-    now = str(datetime.now())
-    now = now.replace("-","/")
-    now = now[:16]
-
+date = date_list[product_list[0]+1]
+if date[11:13] =="00":
+    print("預計爬取時間:23:50")
+    while int(now[11:13])!= 11 or now[14:]!="50":
+        print(now)
+        time.sleep(10)
+        now = str(datetime.now())
+        now = now.replace("-","/")
+        now = now[:16]
+else:
+    print("預計爬取時間:"+str(int(date[11:13])-1)+":50")
+    while int(now[11:13])-int(date[11:13])!= -1 or now[14:]!="50":
+        print(now)
+        time.sleep(10)
+        now = str(datetime.now())
+        now = now.replace("-","/")
+        now = now[:16]
 print("開爬時間",now)
 driver = webdriver.Chrome()
 driver.get("https://www.momoshop.com.tw/edm/cmmedm.jsp?lpn=O1K5FBOqsvN&n=1")
@@ -129,7 +138,7 @@ for link in link_list:
                     if "市售價" in price[i]:
                         price_1 = price[i]
                         price_1 = price_1[3:]
-                        price_1 = price_1.replace("元""")   
+                        price_1 = price_1.replace("元","")   
                         price_1 = price_1.replace(",","")
                     else:
                         price_1 = "null"
