@@ -31,8 +31,9 @@ now = str(datetime.now())
 now = now.replace("-","/")
 now = now[:16]
 date = date_list[product_list[0]+1]
+print(date)
 if date[11:13] =="00":
-    while int(now[11:13])!= 11 or int(now[14:])<50:
+    while int(now[11:13])!= 23 or int(now[14:])<50:
         print(now)
         time.sleep(10)
         now = str(datetime.now())
