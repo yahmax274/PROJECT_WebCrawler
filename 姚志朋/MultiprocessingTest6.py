@@ -2,10 +2,6 @@ def MultThread():
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(main, Href_list)
-def MultProcess():
-    import concurrent.futures
-    # with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:executor.map(Main,Href_list, chunksize=5)
-    with concurrent.futures.ProcessPoolExecutor() as executor:executor.map(main,Href_list, chunksize=1000)
 def input(file):
     from openpyxl import load_workbook
     wb = load_workbook(file)
@@ -14,22 +10,19 @@ def input(file):
     # Column
     column = ws['A']
     link_list = [column[x].value for x in range(len(column))]
-    return (link_list)
-
-def main(link):#n為設定爬取資料筆數
+    return (link_list)   
+#匯出csv檔
+def output(total):    
+    import pandas as pd
+    raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": total}
+    df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
+    df.to_csv("momo3.csv",encoding='utf-8-Sig',index=False)
+    
+def main(link):
     import requests
     from bs4 import BeautifulSoup
     import datetime
     from fake_useragent import UserAgent
-    #list
-    type_list = []
-    brand_list = []
-    name_list = []
-    price_list = []
-    date_list = []
-    spec_list = []
-    act_list = []
-    # all_list = []
     url = link
     user_agent = UserAgent()
     headers={ 'user-agent': user_agent.random }
@@ -50,19 +43,19 @@ def main(link):#n為設定爬取資料筆數
                     if type[i] == "":
                         type[i] ="null"
                 type = type[0]+"|"+type[1]+"|"+type[2]+"|"+type[3]+"|"+type[4]
-                type_list.append(type)
+                type_list=type
                 
         #brand
         brand = soup.find("a",{"class":"webBrandLink"}).get_text()
-        brand_list.append(brand)
+        brand_list=brand
         #item_name
         name = soup.find("span",{"id":"osmGoodsName"}).get_text()
-        name_list.append(name)
+        name_list=name
         #prices
         prices = soup.find_all("ul",class_ = "prdPrice")
         if prices ==[]:
                 price = "null|null|null"
-                price_list.append(price)
+                price_list=price
         else:
             for price in prices:
                 price = price.text
@@ -100,18 +93,18 @@ def main(link):#n為設定爬取資料筆數
                         else:
                             price_3 = "null"  
                 price = price_1+"|"+price_2+"|"+price_3
-                price_list.append(price)
+                price_list=price
         #date
         date = datetime.date.today()
         date = str(date)
         date = date.replace("-","")
-        date_list.append(date)
+        date_list=date
         #spec
         spec = soup.find("div",class_ = "vendordetailview specification").get_text()
         spec = spec.replace("\n","")
         spec = spec.replace(" ","")
         spec = spec.strip("TOP")
-        spec_list.append(spec)
+        spec_list=spec
         #act
         try:
             act = soup.find("ul",class_ = "ineventArea").text
@@ -126,36 +119,31 @@ def main(link):#n為設定爬取資料筆數
                 act = act[0] +"|"+ act[1]       
         except:
             act = "null|null"
-        act_list.append(act)
+        act_list=act
     except:
+        index="N/A"
         pass
-    for i in range(len(type_list)):  
-        all = type_list[i]+"|"+brand_list[i]+"|"+name_list[i]+"|"+price_list[i]+"|"+date_list[i]+"|"+spec_list[i]+"|"+act_list[i]
-        all_list.append(all)    
-    return(all_list)
-    
-     
-#匯出csv檔
-def output(all):    
-    import pandas as pd
-    raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": all_list}
-    df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
-    df.to_csv("momo3.csv",encoding='utf-8-Sig',index=False)
-    
-    
+    index = type_list+"|"+brand_list+"|"+name_list+"|"+price_list+"|"+date_list+"|"+spec_list+"|"+act_list
+    return index
+def CcIndex():
+    a=((len(link_list))+1)/2
+    return a
+
 if __name__ == '__main__':
     import time
     import concurrent.futures
     all_list = []
     Href_list=[]
+    total=[]
     start = time.time() # 開始測量執行時間
     link_list = input('3Ckey.xlsx')#匯入檔案名稱
-    # a=((len(link_list))+1)/2
-    # print(a)
-    for link in link_list[69757:]:#10為執行筆數
+    for link in link_list[6:11]:#執行筆數69757
         Href_list.append(link)
-    MultThread()
-    print(len(all_list))
-    output(all_list)
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for result in (executor.map(main, Href_list, chunksize=10))-1:
+            total.append(result)
+    print(len(total))
+    output(total)
+    # print(total)
     end = time.time() # 結束測量執行時間
     print("執行時間為 %f 秒" % (end - start))
