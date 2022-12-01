@@ -7,9 +7,9 @@ def MultiProcess():
         for result in executor.map(Main, Href_list, chunksize=500):
             total.append(result)
     return total
-def MultiProcess1():
+def MultiProcess1(n,m):
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        futures = [executor.submit(Main, link) for link in Href_list]
+        futures = [executor.submit(Main, link) for link in Href_list[n:m]]
         for future in concurrent.futures.as_completed(futures):
             total.append(future.result())
     return total
@@ -148,7 +148,35 @@ def Main(link):
 def CcIndex():
     a=((len(link_list))+1)/2
     return a
-
+###------######------######------######------###
+# if __name__ == '__main__':
+#     n=0
+#     m=50
+#     import time
+#     import concurrent.futures
+#     all_list = []
+#     Href_list=[]
+#     total=[]
+#     start = time.time() # 開始測量執行時間
+#     start_time = time.ctime(start)
+#     print("開始執行時間：", start_time)
+#     link_list = Input('3Ckey.xlsx')#匯入檔案名稱
+#     # print(CcIndex())
+#     for link in link_list[n:m]:#執行筆數69757
+#         Href_list.append(link)
+#     # 方法一
+#     # MultiProcess()
+#     # 方法二
+#     MultiProcess1()
+#     print(len(total))
+#     Output(total)
+#     end = time.time() # 結束測量執行時間
+#     end_time = time.ctime(end)
+#     print("執行結束時間：", end_time)
+#     print("執行時間為 %f 秒" % (end - start))
+###------######------######------######------###
+n=0
+m=10
 if __name__ == '__main__':
     import time
     import concurrent.futures
@@ -159,16 +187,19 @@ if __name__ == '__main__':
     start_time = time.ctime(start)
     print("開始執行時間：", start_time)
     link_list = Input('3Ckey.xlsx')#匯入檔案名稱
-    # print(CcIndex())
-    for link in link_list[:100]:#執行筆數69757
-        Href_list.append(link)
-    # 方法一
-    # MultiProcess()
-    # 方法二
-    MultiProcess1()
+    while m<150:
+        for link in link_list[n:m]:#執行筆數69757
+            Href_list.append(link)
+        print(len(Href_list))
+        MultiProcess1(n,m)
+        time.sleep(5)
+        n=m
+        m=m+10
+        continue
     print(len(total))
     Output(total)
     end = time.time() # 結束測量執行時間
     end_time = time.ctime(end)
     print("執行結束時間：", end_time)
     print("執行時間為 %f 秒" % (end - start))
+
