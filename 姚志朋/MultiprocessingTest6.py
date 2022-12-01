@@ -23,6 +23,7 @@ def main(link):
     from bs4 import BeautifulSoup
     import datetime
     from fake_useragent import UserAgent
+    a=0
     url = link
     user_agent = UserAgent()
     headers={ 'user-agent': user_agent.random }
@@ -39,6 +40,7 @@ def main(link):
             if type == []:
                 continue
             else:
+                a=1
                 for i in range(4):  
                     if type[i] == "":
                         type[i] ="null"
@@ -121,9 +123,11 @@ def main(link):
             act = "null|null"
         act_list=act
     except:
-        index="N/A"
         pass
-    index = type_list+"|"+brand_list+"|"+name_list+"|"+price_list+"|"+date_list+"|"+spec_list+"|"+act_list
+    if a==1:
+        index = type_list+"|"+brand_list+"|"+name_list+"|"+price_list+"|"+date_list+"|"+spec_list+"|"+act_list
+    else:
+        index="N/A"
     return index
 def CcIndex():
     a=((len(link_list))+1)/2
@@ -137,10 +141,10 @@ if __name__ == '__main__':
     total=[]
     start = time.time() # 開始測量執行時間
     link_list = input('3Ckey.xlsx')#匯入檔案名稱
-    for link in link_list[6:11]:#執行筆數69757
+    for link in link_list[:11]:#執行筆數69757
         Href_list.append(link)
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        for result in (executor.map(main, Href_list, chunksize=10))-1:
+        for result in executor.map(main, Href_list, chunksize=10):
             total.append(result)
     print(len(total))
     output(total)
