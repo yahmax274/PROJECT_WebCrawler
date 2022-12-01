@@ -4,7 +4,7 @@ def MultThread():
         executor.map(Main, Href_list)
 def MultiProcess():
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        for result in executor.map(Main, Href_list, chunksize=100,timeout=5):
+        for result in executor.map(Main, Href_list, chunksize=100,timeout=10):
             total.append(result)
     return total
 def Input(file):
