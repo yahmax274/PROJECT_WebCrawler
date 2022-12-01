@@ -1,8 +1,13 @@
 def MultThread():
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(main, Href_list)
-def input(file):
+        executor.map(Main, Href_list)
+def MultiProcess():
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for result in executor.map(Main, Href_list, chunksize=10):
+            total.append(result)
+    return total
+def Input(file):
     from openpyxl import load_workbook
     wb = load_workbook(file)
     # Work Sheet
@@ -12,17 +17,22 @@ def input(file):
     link_list = [column[x].value for x in range(len(column))]
     return (link_list)   
 #匯出csv檔
-def output(total):    
+def Output(total):    
     import pandas as pd
     raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": total}
     df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
     df.to_csv("momo3.csv",encoding='utf-8-Sig',index=False)
     
-def main(link):
+def Main(link):
     import requests
     from bs4 import BeautifulSoup
     import datetime
     from fake_useragent import UserAgent
+    import random
+    import time
+    delay_choices = [1,2,3,4,5]  #延遲的秒數
+    delay = random.choice(delay_choices)
+    time.sleep(delay)
     a=0
     url = link
     user_agent = UserAgent()
@@ -140,14 +150,16 @@ if __name__ == '__main__':
     Href_list=[]
     total=[]
     start = time.time() # 開始測量執行時間
-    link_list = input('3Ckey.xlsx')#匯入檔案名稱
-    for link in link_list[:11]:#執行筆數69757
+    start_time = time.ctime(start)
+    print("開始執行時間：", start_time)
+    link_list = Input('3Ckey.xlsx')#匯入檔案名稱
+    # print(CcIndex())
+    for link in link_list[:100]:#執行筆數69757
         Href_list.append(link)
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        for result in executor.map(main, Href_list, chunksize=10):
-            total.append(result)
+    MultiProcess()
     print(len(total))
-    output(total)
-    # print(total)
+    Output(total)
     end = time.time() # 結束測量執行時間
+    end_time = time.ctime(end)
+    print("執行結束時間：", end_time)
     print("執行時間為 %f 秒" % (end - start))
