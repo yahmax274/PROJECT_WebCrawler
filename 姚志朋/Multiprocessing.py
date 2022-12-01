@@ -158,8 +158,9 @@ if __name__ == '__main__':
     start_time = time.ctime(start)
     print("開始執行時間：", start_time)
     link_list = Input('3Ckey.xlsx')#匯入檔案名稱
+    Set_Number=10
     n=0
-    m=10
+    m=Set_Number
     while m<150:
         for link in link_list[n:m]:#執行筆數69757
             Href_list.append(link)
@@ -167,7 +168,7 @@ if __name__ == '__main__':
         MultiProcess1(n,m)
         time.sleep(5)
         n=m
-        m=m+10
+        m=m+Set_Number
         continue
     print(len(total))
     Output(total)
