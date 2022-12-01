@@ -4,8 +4,14 @@ def MultThread():
         executor.map(Main, Href_list)
 def MultiProcess():
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        for result in executor.map(Main, Href_list, chunksize=100,timeout=10):
+        for result in executor.map(Main, Href_list, chunksize=500):
             total.append(result)
+    return total
+def MultiProcess1():
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(Main, link) for link in Href_list]
+        for future in concurrent.futures.as_completed(futures):
+            total.append(future.result())
     return total
 def Input(file):
     from openpyxl import load_workbook
@@ -154,9 +160,12 @@ if __name__ == '__main__':
     print("開始執行時間：", start_time)
     link_list = Input('3Ckey.xlsx')#匯入檔案名稱
     # print(CcIndex())
-    for link in link_list[0:100]:#執行筆數69757
+    for link in link_list[:100]:#執行筆數69757
         Href_list.append(link)
-    MultiProcess()
+    # 方法一
+    # MultiProcess()
+    # 方法二
+    MultiProcess1()
     print(len(total))
     Output(total)
     end = time.time() # 結束測量執行時間
