@@ -177,7 +177,7 @@ if __name__ == '__main__':
     Index=CcIndex()
     check=0
     Check_list=[]
-    Set_Number=50
+    Set_Number=50#一次執行數量
     n=0
     m=Set_Number+n
     while m<Index:
@@ -185,7 +185,10 @@ if __name__ == '__main__':
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
                 break
         if check%10==0:
-            time.sleep(30)
+            delay_choices = [30,45,60]  #延遲的秒數
+            delay = random.choice(delay_choices)
+            print("執行10次休息：", delay)
+            time.sleep(delay)
         delay_choices = [5,7,9,11]  #延遲的秒數
         delay = random.choice(delay_choices)
         # MultiProcess(n,m)
