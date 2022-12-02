@@ -165,6 +165,7 @@ def CcIndex():
 if __name__ == '__main__':
     import time
     import concurrent.futures
+    import random
     all_list = []
     Href_list=[]
     total=[]
@@ -174,17 +175,27 @@ if __name__ == '__main__':
     print("開始執行時間：", start_time)
     Href_list = Input('3Ckey.xlsx')#匯入檔案名稱
     Index=CcIndex()
+    check=0
+    Check_list=[]
     Set_Number=50
     n=0
     m=Set_Number+n
-    print(len(Href_list))
     while m<Index:
+        if check>5:
+            if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
+                break
+        if check%10==0:
+            time.sleep(30)
+        delay_choices = [5,7,9,11]  #延遲的秒數
+        delay = random.choice(delay_choices)
         # MultiProcess(n,m)
         MultiProcess1(n,m)
-        time.sleep(5)
+        time.sleep(delay)
         n=m
         m=m+Set_Number
         print(len(total))
+        check=check+1
+        Check_list.append(len(total))
         continue
     print("實際得到：",len(total)-len(error))
     Output(total)
@@ -192,4 +203,3 @@ if __name__ == '__main__':
     end_time = time.ctime(end)
     print("執行結束時間：", end_time)
     print("執行時間為 %f 秒" % (end - start))
-
