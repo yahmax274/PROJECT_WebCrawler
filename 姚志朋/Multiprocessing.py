@@ -174,7 +174,7 @@ if __name__ == '__main__':
     print("開始執行時間：", start_time)
     Href_list = Input('3Ckey.xlsx')#匯入檔案名稱
     Index=CcIndex()
-    Set_Number=20
+    Set_Number=50
     n=0
     m=Set_Number+n
     while m<Index:
