@@ -184,11 +184,11 @@ if __name__ == '__main__':
         if check>5:
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
                 break
-        if check%10==0:
-            delay_choices = [30,45,60]  #延遲的秒數
-            delay = random.choice(delay_choices)
-            print("執行10次休息：", delay)
-            time.sleep(delay)
+            if check%10==0:
+                delay_choices = [30,45,60]  #延遲的秒數
+                delay = random.choice(delay_choices)
+                print("執行10次休息：", delay)
+                time.sleep(delay)
         delay_choices = [5,7,9,11]  #延遲的秒數
         delay = random.choice(delay_choices)
         # MultiProcess(n,m)
