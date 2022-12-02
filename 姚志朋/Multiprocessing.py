@@ -1,23 +1,36 @@
-def MultThread():
+def MultThread(n,m):
     import concurrent.futures
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(Main, Href_list)
-def MultiProcess():
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        for result in executor.map(Main, Href_list, chunksize=500):
+        executor.map(Main, Href_list[n:m])
+def MultiProcess(n,m):
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for result in executor.map(Main, Href_list[n:m], chunksize=50):
             total.append(result)
-    return total
+            try:
+                total.append(result)
+            except:
+                total.append("Error")
+                error.append("Error")
+                continue 
+    return total,error
 def MultiProcess1(n,m):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(Main, link) for link in Href_list[n:m]]
         for future in concurrent.futures.as_completed(futures):
-            total.append(future.result())
-    return total
+            try:
+                total.append(future.result())
+            except:
+                # total.append("ReadTimeOut")
+                error.append("ReadTimeOut")
+                continue 
+    return total,error
+
 def Input(file):
     from openpyxl import load_workbook
     wb = load_workbook(file)
     # Work Sheet
-    ws = wb.get_sheet_by_name('sheet1')
+    ws = wb.get_sheet_by_name('sheet2')
     # Column
     column = ws['A']
     link_list = [column[x].value for x in range(len(column))]
@@ -139,38 +152,40 @@ def Main(link):
             act = "null|null"
         act_list=act
     except:
+        index="NoResponse"
         pass
     if a==1:
         index = type_list+"|"+brand_list+"|"+name_list+"|"+price_list+"|"+date_list+"|"+spec_list+"|"+act_list
     else:
-        index="N/A"
+        index="null"
     return index
 def CcIndex():
-    a=((len(link_list))+1)/2
-    return a
+    Index=len(Href_list)+50
+    return Index
 if __name__ == '__main__':
     import time
     import concurrent.futures
     all_list = []
     Href_list=[]
     total=[]
+    error=[]
     start = time.time() # 開始測量執行時間
     start_time = time.ctime(start)
     print("開始執行時間：", start_time)
-    link_list = Input('3Ckey.xlsx')#匯入檔案名稱
-    Set_Number=10
+    Href_list = Input('3Ckey.xlsx')#匯入檔案名稱
+    Index=CcIndex()
+    Set_Number=20
     n=0
-    m=Set_Number
-    while m<150:
-        for link in link_list[n:m]:#執行筆數69757
-            Href_list.append(link)
-        print(len(Href_list))
+    m=Set_Number+n
+    while m<Index:
+        # MultiProcess(n,m)
         MultiProcess1(n,m)
         time.sleep(5)
         n=m
         m=m+Set_Number
+        print(len(total))
         continue
-    print(len(total))
+    print("實際得到：",len(total)-len(error))
     Output(total)
     end = time.time() # 結束測量執行時間
     end_time = time.ctime(end)
