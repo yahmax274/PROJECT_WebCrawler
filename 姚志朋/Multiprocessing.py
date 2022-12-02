@@ -30,7 +30,7 @@ def Input(file):
     from openpyxl import load_workbook
     wb = load_workbook(file)
     # Work Sheet
-    ws = wb.get_sheet_by_name('sheet2')
+    ws = wb.get_sheet_by_name('sheet1')
     # Column
     column = ws['A']
     link_list = [column[x].value for x in range(len(column))]
@@ -177,6 +177,7 @@ if __name__ == '__main__':
     Set_Number=50
     n=0
     m=Set_Number+n
+    print(len(Href_list))
     while m<Index:
         # MultiProcess(n,m)
         MultiProcess1(n,m)
