@@ -28,6 +28,7 @@ def MultiProcess1(n,m,Ip):
 def ChangeIp():
     import requests
     import re
+    print("重新抓取Proxy IP")
     response = requests.get("https://www.sslproxies.org/")
     proxy_ips = re.findall('\d+\.\d+\.\d+\.\d+:\d+', response.text)  #「\d+」代表數字一個位數以上
     valid_ips = []
@@ -72,7 +73,7 @@ def Main(link,Ip):
     url = link
     try:
         proxy_ip = random.choice(Ip)  # 隨機取得Proxy IP
-        print(f'使用的Proxy IP：{proxy_ip}')
+#         print(f'使用的Proxy IP：{proxy_ip}')
     except:
         Ip.clear()
         Ip=ChangeIp()
