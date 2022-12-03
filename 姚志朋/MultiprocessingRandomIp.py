@@ -78,7 +78,7 @@ def Main(link,Ip):
         pass
     user_agent = UserAgent()
     headers={ 'user-agent': user_agent.random }
-    re = requests.get(url,headers=headers, timeout=5,proxies={'http': f'{proxy_ip}', 'https': f'{proxy_ip}'})
+    re = requests.get(url,headers=headers, timeout=10,proxies={'http': f'{proxy_ip}', 'https': f'{proxy_ip}'})
     soup = BeautifulSoup(re.text,"html.parser")
     #type
     types = soup.find_all("div",{"id":"bt_2_layout_NAV"})
