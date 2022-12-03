@@ -210,7 +210,7 @@ if __name__ == '__main__':
                 break
             if check%10==0:
                 now = time.time()
-                print("執行第",check*10,"次時間為 %f 秒" % (now - thiscycle),"本循環執行數",check-((check//23)*23))
+                print("執行第",check*100,"次時間為 %f 秒" % (now - thiscycle),"本循環執行數",check-((check//23)*23))
             if check%17==0:
                 delay_choices = [15,30,45]  #延遲的秒數
                 delay = random.choice(delay_choices)
