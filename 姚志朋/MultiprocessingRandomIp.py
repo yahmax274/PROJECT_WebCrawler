@@ -200,7 +200,7 @@ if __name__ == '__main__':
     Index=CcIndex()
     Ip=ChangeIp()
     check=0
-    Set_Number=50#一次執行數量
+    Set_Number=100#一次執行數量
     n=0+9617
     m=Set_Number+n
     while m<Index:
