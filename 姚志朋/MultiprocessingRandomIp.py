@@ -209,10 +209,10 @@ if __name__ == '__main__':
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
                 break
             if check%10==0:
-                delay_choices = [30,45,60]  #延遲的秒數
-                delay = random.choice(delay_choices)
-                print("執行10次休息：", delay)
-                time.sleep(delay)
+#                 delay_choices = [30,45,60]  #延遲的秒數
+#                 delay = random.choice(delay_choices)
+                print("執行10次休息：Ip重抓,執行第", check)
+#                 time.sleep(delay)
                 Ip.clear()
                 Ip=ChangeIp()
         # MultiProcess(n,m)
