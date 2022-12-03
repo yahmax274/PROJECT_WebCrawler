@@ -208,12 +208,14 @@ if __name__ == '__main__':
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
                 break
             if check%10==0:
+                print("執行第",check*10,"次")
+            if check%17==0:
                 delay_choices = [15,30,45]  #延遲的秒數
                 delay = random.choice(delay_choices)
-                print("執行10次休息：",delay," 執行第：", check)
+                print("執行17次休息：",delay," 執行第：", check)
                 time.sleep(delay)
-            if check%17==0:
-                print("執行17次Ip重抓,執行第", check)
+            if check%23==0:
+                print("執行23次Ip重抓,執行第", check)
                 Ip.clear()
                 Ip=ChangeIp()
                 print("IP_Len:",len(Ip))
