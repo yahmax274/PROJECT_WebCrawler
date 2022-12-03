@@ -211,6 +211,8 @@ if __name__ == '__main__':
             if check%10==0:
                 now = time.time()
                 print("執行第",check*100,"次時間為 %f 秒" % (now - thiscycle),"本循環執行數",check-((check//23)*23))
+                print("暫存一次")
+                Output(total)#每10次匯出檔案一次
             if check%17==0:
                 delay_choices = [15,30,45]  #延遲的秒數
                 delay = random.choice(delay_choices)
@@ -231,9 +233,10 @@ if __name__ == '__main__':
         check=check+1
         Check_list.append(len(total))
         continue
-    print("實際得到：",len(total)-len(error))
+    print("實際得到：",(check*Set_Number)-len(total))
     Output(total)
     end = time.time() # 結束測量執行時間
     end_time = time.ctime(end)
+    print("執行數量",check*Set_Number)
     print("執行結束時間：", end_time)
     print("執行時間為 %f 秒" % (end - start))
