@@ -34,7 +34,7 @@ def ChangeIp():
     valid_ips = []
     for index, ip in enumerate(proxy_ips):
         try:
-            if index <= 10: 
+            if index <= 30: 
                 result = requests.get('https://ip.seeip.org/jsonip?',
                                     proxies={'http': ip, 'https': ip},
                                     timeout=5)
@@ -73,10 +73,9 @@ def Main(link,Ip):
     url = link
     try:
         proxy_ip = random.choice(Ip)  # 隨機取得Proxy IP
-#         print(f'使用的Proxy IP：{proxy_ip}')
+        # print(f'使用的Proxy IP：{proxy_ip}')
     except:
-        Ip.clear()
-        Ip=ChangeIp()
+        pass
     user_agent = UserAgent()
     headers={ 'user-agent': user_agent.random }
     re = requests.get(url,headers=headers, timeout=5,proxies={'http': f'{proxy_ip}', 'https': f'{proxy_ip}'})
@@ -215,6 +214,7 @@ if __name__ == '__main__':
 #                 time.sleep(delay)
                 Ip.clear()
                 Ip=ChangeIp()
+                print("IP_Len:",len(Ip))
         # MultiProcess(n,m)
         MultiProcess1(n,m,Ip)
         time.sleep(5)
