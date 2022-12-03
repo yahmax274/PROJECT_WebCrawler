@@ -201,7 +201,7 @@ if __name__ == '__main__':
     Ip=ChangeIp()
     check=0
     Set_Number=50#一次執行數量
-    n=0+5763
+    n=0
     m=Set_Number+n
     while m<Index:
         if check>5:
