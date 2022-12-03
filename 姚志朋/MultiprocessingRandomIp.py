@@ -214,31 +214,6 @@ if __name__ == '__main__':
                 time.sleep(delay)
                 Ip.clear()
                 Ip=ChangeIp()
-            # if check%17==0:
-            #     delay_choices = [10,15,20]  #延遲的秒數
-            #     delay = random.choice(delay_choices)
-            #     print("執行17次休息：", delay)
-            #     time.sleep(delay)
-            # if check%23==0:
-            #     delay_choices = [3,13,23]  #延遲的秒數
-            #     delay = random.choice(delay_choices)
-            #     print("執行23次休息：", delay)
-            #     time.sleep(delay)
-            # if check%59==0:
-            #     delay_choices = [8,18,28]  #延遲的秒數
-            #     delay = random.choice(delay_choices)
-            #     print("執行59次休息：", delay)
-            #     time.sleep(delay)
-            # if check%113==0:
-            #     delay_choices = [2,18,24]  #延遲的秒數
-            #     delay = random.choice(delay_choices)
-            #     print("執行113次休息：", delay)
-            #     time.sleep(delay)
-            # if check%317==0:
-            #     delay_choices = [4,15,28]  #延遲的秒數
-            #     delay = random.choice(delay_choices)
-            #     print("執行317次休息：", delay)
-            #     time.sleep(delay)
         # MultiProcess(n,m)
         MultiProcess1(n,m,Ip)
         time.sleep(5)
