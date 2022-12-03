@@ -194,6 +194,7 @@ if __name__ == '__main__':
     error=[]
     Check_list=[]
     start = time.time() # 開始測量執行時間
+    thiscycle=time.time()# 開始測量本迴圈執行時間(僅用一次)
     start_time = time.ctime(start)
     print("開始執行時間：", start_time)
     Href_list = Input('3Ckey.xlsx')#匯入檔案名稱
@@ -201,20 +202,22 @@ if __name__ == '__main__':
     Ip=ChangeIp()
     check=0
     Set_Number=100#一次執行數量
-    n=0+9617
+    n=0+12385
     m=Set_Number+n
     while m<Index:
         if check>5:
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
                 break
             if check%10==0:
-                print("執行第",check*10,"次")
+                now = time.time()
+                print("執行第",check*10,"次時間為 %f 秒" % (now - thiscycle),"本迴圈執行數",check-((check//23)*23))
             if check%17==0:
                 delay_choices = [15,30,45]  #延遲的秒數
                 delay = random.choice(delay_choices)
-                print("執行17次休息：",delay," 執行第：", check)
+                print("執行17次休息：",delay,"秒。執行第：", check)
                 time.sleep(delay)
             if check%23==0:
+                thiscycle=time.time()
                 print("執行23次Ip重抓,執行第", check)
                 Ip.clear()
                 Ip=ChangeIp()
