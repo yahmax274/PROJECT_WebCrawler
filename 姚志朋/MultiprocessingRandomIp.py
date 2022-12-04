@@ -182,7 +182,7 @@ def Main(link,Ip):
         index="null"
     return index
 def CcIndex():
-    Index=len(Href_list)+50
+    Index=len(Href_list)+300
     return Index
 if __name__ == '__main__':
     import time
@@ -200,19 +200,28 @@ if __name__ == '__main__':
     Href_list = Input('3Ckey.xlsx')#匯入檔案名稱
     Index=CcIndex()
     Ip=ChangeIp()
+    print("IP_Len:",len(Ip))
     check=0
-    Set_Number=100#一次執行數量
-    n=0+12385
+    Set_Number=500#一次執行數量
+    n=0+67985
     m=Set_Number+n
     while m<Index:
         if check>5:
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
                 break
+            if Check_list[check-1]!=Check_list[check-2]:
+                if Check_list[check-2]!=Check_list[check-3]:
+                    if Check_list[check-3]!=Check_list[check-4]:
+                        if (Check_list[check-1]-Check_list[check-2])<Set_Number*0.4:
+                            print("重抓Ip", check)
+                            Ip.clear()
+                            Ip=ChangeIp()
+                            print("IP_Len:",len(Ip))
             if check%10==0:
                 now = time.time()
                 print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - thiscycle),"本循環執行數",check-((check//23)*23))
                 print("暫存一次")
-                Output(total)#每10次匯出檔案一次
+                Output(total)
             if check%17==0:
                 delay_choices = [15,30,45]  #延遲的秒數
                 delay = random.choice(delay_choices)
