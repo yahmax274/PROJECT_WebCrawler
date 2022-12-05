@@ -1,19 +1,3 @@
-def MultThread(n,m):
-    import concurrent.futures
-    # with concurrent.futures.ThreadPoolExecutor() as executor:
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        executor.map(Main, Href_list[n:m])
-def MultiProcess(n,m):
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        for result in executor.map(Main, Href_list[n:m], chunksize=50):
-            total.append(result)
-            try:
-                total.append(result)
-            except:
-                total.append("Error")
-                error.append("Error")
-                continue 
-    return total,error
 def MultiProcess1(n,m,Ip):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(Main, link,Ip) for link in Href_list[n:m]]
@@ -21,28 +5,36 @@ def MultiProcess1(n,m,Ip):
             try:
                 total.append(future.result())
             except:
-                # total.append("ReadTimeOut")
                 error.append("ReadTimeOut")
                 continue 
-    return total,error
-def ChangeIp():
+    return total
+def IpCollect():
+    import concurrent.futures
     import requests
     import re
-    print("重新抓取Proxy IP")
+    proxy_ips=[]
     response = requests.get("https://www.sslproxies.org/")
-    proxy_ips = re.findall('\d+\.\d+\.\d+\.\d+:\d+', response.text)  #「\d+」代表數字一個位數以上
-    valid_ips = []
-    for index, ip in enumerate(proxy_ips):
-        try:
-            if index <= 30: 
-                result = requests.get('https://ip.seeip.org/jsonip?',
-                                    proxies={'http': ip, 'https': ip},
-                                    timeout=5)
-                print(result.json())
-                valid_ips.append(ip)
-        except:
-            pass
-    return valid_ips
+    proxy_ips = re.findall('\d+\.\d+\.\d+\.\d+:\d+', response.text) 
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(IpCheck, link) for link in proxy_ips]
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                IpUseable.append(future.result())
+            except:
+                continue 
+
+    return IpUseable
+def IpCheck(ip):
+    import requests
+    try:
+        result = requests.get('https://ip.seeip.org/jsonip?',
+			       proxies={'http': ip, 'https': ip},
+			       timeout=5)
+        print(result.json())
+        Useable=ip
+    except:
+        pass
+    return Useable
 def Input(file):
     from openpyxl import load_workbook
     wb = load_workbook(file)
@@ -57,7 +49,9 @@ def Output(total):
     import pandas as pd
     raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": total}
     df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
-    df.to_csv("momo3.csv",encoding='utf-8-Sig',index=False)
+    df.to_csv("momo美妝key.csv",encoding='utf-8-Sig',index=False)
+    df = pd.DataFrame(error)
+    df.to_csv("momo美妝keyerror.csv",encoding='utf-8-Sig',index=False)
     
 def Main(link,Ip):
     import requests
@@ -72,8 +66,7 @@ def Main(link,Ip):
     a=0
     url = link
     try:
-        proxy_ip = random.choice(Ip)  # 隨機取得Proxy IP
-        # print(f'使用的Proxy IP：{proxy_ip}')
+        proxy_ip = random.choice(Ip)  # 隨機取得存取的Proxy IP
     except:
         pass
     user_agent = UserAgent()
@@ -193,47 +186,46 @@ if __name__ == '__main__':
     total=[]
     error=[]
     Check_list=[]
+    IpUseable=[]
     start = time.time() # 開始測量執行時間
     thiscycle=time.time()# 開始測量本迴圈執行時間(僅用一次)
     start_time = time.ctime(start)
     print("開始執行時間：", start_time)
-    Href_list = Input('3Ckey.xlsx')#匯入檔案名稱
+    Href_list = Input('美妝key.xlsx')#匯入檔案名稱
     Index=CcIndex()
-    Ip=ChangeIp()
+    Ip=IpCollect()
     print("IP_Len:",len(Ip))
     check=0
     Set_Number=500#一次執行數量
-    n=0+67985
+    n=0
     m=Set_Number+n
     while m<Index:
+        if len(total)>1000:
+            break
         if check>5:
+            #爬蟲被發現時結束程式
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
                 break
+            #爬蟲精確度過低時重新抓取IP
             if Check_list[check-1]!=Check_list[check-2]:
                 if Check_list[check-2]!=Check_list[check-3]:
                     if Check_list[check-3]!=Check_list[check-4]:
                         if (Check_list[check-1]-Check_list[check-2])<Set_Number*0.4:
                             print("重抓Ip", check)
                             Ip.clear()
-                            Ip=ChangeIp()
+                            Ip=IpCollect()
                             print("IP_Len:",len(Ip))
+            #每執行10次暫時存檔
             if check%10==0:
-                now = time.time()
-                print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - thiscycle),"本循環執行數",check-((check//23)*23))
+                thiscycle=time.time()
+                print("執行10次Ip重抓,執行第", check)
+                Ip.clear()
+                Ip=IpCollect()
+                print("IP_Len:",len(Ip))
+                print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - thiscycle))
                 print("暫存一次")
                 Output(total)
-            if check%17==0:
-                delay_choices = [15,30,45]  #延遲的秒數
-                delay = random.choice(delay_choices)
-                print("執行17次休息：",delay,"秒。執行第：", check)
-                time.sleep(delay)
-            if check%23==0:
-                thiscycle=time.time()
-                print("執行23次Ip重抓,執行第", check)
-                Ip.clear()
-                Ip=ChangeIp()
-                print("IP_Len:",len(Ip))
-        # MultiProcess(n,m)
+                now = time.time()
         MultiProcess1(n,m,Ip)
         time.sleep(5)
         n=m
