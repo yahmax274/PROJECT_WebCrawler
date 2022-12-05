@@ -49,9 +49,7 @@ def Output(total):
     import pandas as pd
     raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": total}
     df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
-    df.to_csv("momo美妝key.csv",encoding='utf-8-Sig',index=False)
-    df = pd.DataFrame(error)
-    df.to_csv("momo美妝keyerror.csv",encoding='utf-8-Sig',index=False)
+    df.to_csv("3Ckey.csv",encoding='utf-8-Sig',index=False)
     
 def Main(link,Ip):
     import requests
@@ -180,7 +178,6 @@ def CcIndex():
 if __name__ == '__main__':
     import time
     import concurrent.futures
-    import random
     all_list = []
     Href_list=[]
     total=[]
@@ -191,7 +188,7 @@ if __name__ == '__main__':
     thiscycle=time.time()# 開始測量本迴圈執行時間(僅用一次)
     start_time = time.ctime(start)
     print("開始執行時間：", start_time)
-    Href_list = Input('美妝key.xlsx')#匯入檔案名稱
+    Href_list = Input('3Ckey.xlsx')#匯入檔案名稱
     Index=CcIndex()
     Ip=IpCollect()
     print("IP_Len:",len(Ip))
@@ -200,8 +197,6 @@ if __name__ == '__main__':
     n=0
     m=Set_Number+n
     while m<Index:
-        if len(total)>1000:
-            break
         if check>5:
             #爬蟲被發現時結束程式
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
@@ -217,15 +212,14 @@ if __name__ == '__main__':
                             print("IP_Len:",len(Ip))
             #每執行10次暫時存檔
             if check%10==0:
-                thiscycle=time.time()
+                now = time.time()
                 print("執行10次Ip重抓,執行第", check)
                 Ip.clear()
                 Ip=IpCollect()
                 print("IP_Len:",len(Ip))
-                print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - thiscycle))
+                print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - start))
                 print("暫存一次")
                 Output(total)
-                now = time.time()
         MultiProcess1(n,m,Ip)
         time.sleep(5)
         n=m
