@@ -118,21 +118,26 @@ def main(link):
         return(all)
     except:    
         return(all)
-def MultiProcess1(file,n,m):
-    from concurrent.futures import ProcessPoolExecutor
-    with ProcessPoolExecutor() as executor:
-        a = executor.map(main,input(file)[n:m],chunksize=50)
-    for b in a:
-        if "https" in b:
-            null_list.append(b)
-        else:   
-            all_list.append(b)
-    return(all_list)
 def output(all_list):    
     import pandas as pd
     raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": all_list}
     df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
-    df.to_csv("momo3c2.csv",encoding='utf-8-Sig',index=False)   
+    df.to_csv("momo3c2.csv",encoding='utf-8-Sig',index=False) 
+def MultiProcess1_main(link):
+    import concurrent.futures 
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        a = executor.map(main,link)    
+        executor.shutdown(wait=False)
+        try:
+            for b in a:
+                if "https" in b:
+                    null_list.append(b)
+                else:   
+                    all_list.append(b)
+        except:
+            print("null")
+    return(all_list)
+  
 if __name__ == '__main__':
     import time
     import os
@@ -140,9 +145,15 @@ if __name__ == '__main__':
     start = time.time() # 開始測量執行時間
     all_list = []
     null_list = []
-    MultiProcess1('3Ckey.xlsx',0,10000)
-    print(len(all_list),all_list)
-    print(len(null_list),null_list)
+    link_list = input('3Ckey.xlsx')
+    total_num = 100 #設定爬取1000個url
+    for i in range(total_num//10):
+        link = link_list[0+i*10:10+i*10]
+        MultiProcess1_main(link)
+        now = time.time()
+        print(now-start)
+    print(len(all_list),len(null_list))
     output(all_list)
     end = time.time() # 結束測量執行時間
     print("執行時間為 %f 秒" % (end - start))
+    os._exit(0)
