@@ -1,3 +1,12 @@
+def MultiProcess(n,m,Ip):
+    import concurrent.futures
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for result  in executor.map(Main ,Href_list,Ip, chunksize=500):
+            try:
+                total.append(result )
+            except:
+                continue 
+    return total
 def MultiProcess1(n,m,Ip):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(Main, link,Ip) for link in Href_list[n:m]]
@@ -6,9 +15,10 @@ def MultiProcess1(n,m,Ip):
                 total.append(future.result())
             except:
                 error.append("ReadTimeOut")
-                continue 
+                continue    
     return total
-def IpCollect():
+##----------####-----RandomIP-----####----------##
+def IpCollect():#收集IP步驟1
     import concurrent.futures
     import requests
     import re
@@ -22,10 +32,12 @@ def IpCollect():
                 IpUseable.append(future.result())
             except:
                 continue 
-
+    print("收集到的IP數量:",len(IpUseable))
+    IpReCollect()
     return IpUseable
-def IpCheck(ip):
+def IpCheck(ip):#收集IP步驟2
     import requests
+    # Useable=""
     try:
         result = requests.get('https://ip.seeip.org/jsonip?',
 			       proxies={'http': ip, 'https': ip},
@@ -35,7 +47,38 @@ def IpCheck(ip):
     except:
         pass
     return Useable
-def Input(file):
+def IpReCollect():#收集IP步驟3
+    import concurrent.futures
+    import requests
+    import re
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(IpReCheck, link) for link in IpUseable]
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                IpReUseable.append(future.result())
+            except:
+                continue 
+    print("確定能使用的IP數量:",len(IpReUseable))
+    print(IpReUseable)
+    return IpReUseable
+def IpReCheck(ip):#收集IP步驟4
+    import requests
+    from bs4 import BeautifulSoup
+    from fake_useragent import UserAgent
+    try:
+        user_agent = UserAgent()
+        headers={ 'user-agent': user_agent.random }
+        result = requests.get('https://www.momoshop.com.tw/main/Main.jsp',
+			       proxies={'http': ip, 'https': ip},
+			       timeout=5,
+                   headers=headers)
+        if result.status_code==200:
+            Useable=ip
+    except:
+        pass
+    return Useable
+##----------####-----RandomIP-----####----------##
+def Input(file):#匯入Excel資料
     from openpyxl import load_workbook
     wb = load_workbook(file)
     # Work Sheet
@@ -44,14 +87,12 @@ def Input(file):
     column = ws['A']
     link_list = [column[x].value for x in range(len(column))]
     return (link_list)   
-#匯出csv檔
-def Output(total):    
+def Output(total):#匯出csv檔
     import pandas as pd
     raw_data ={"app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act": total}
     df = pd.DataFrame(raw_data,columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
     df.to_csv("3Ckey.csv",encoding='utf-8-Sig',index=False)
-    
-def Main(link,Ip):
+def Main(link,Ip):#主函式
     import requests
     from bs4 import BeautifulSoup
     import datetime
@@ -183,7 +224,10 @@ if __name__ == '__main__':
     total=[]
     error=[]
     Check_list=[]
+    proxy_ips=[]
+    valid_ips=[]
     IpUseable=[]
+    IpReUseable=[]
     start = time.time() # 開始測量執行時間
     thiscycle=time.time()# 開始測量本迴圈執行時間(僅用一次)
     start_time = time.ctime(start)
@@ -197,6 +241,8 @@ if __name__ == '__main__':
     n=0
     m=Set_Number+n
     while m<Index:
+        if len(total)>200:
+            break
         if check>5:
             #爬蟲被發現時結束程式
             if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
@@ -228,7 +274,7 @@ if __name__ == '__main__':
         check=check+1
         Check_list.append(len(total))
         continue
-    print("遺失數：",(check*Set_Number)-len(total))
+    print("遺失數：",(check*Set_Number)-len(error))
     Output(total)
     end = time.time() # 結束測量執行時間
     end_time = time.ctime(end)
