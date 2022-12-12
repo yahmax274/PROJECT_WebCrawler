@@ -1,0 +1,44 @@
+import concurrent.futures
+import time
+def input(file):
+    from openpyxl import load_workbook
+    wb = load_workbook(file)
+    # Work Sheet
+    ws = wb.get_sheet_by_name('sheet1')
+    # Column
+    column = ws['A']
+    link_list = [column[x].value for x in range(len(column))]
+    return (link_list)
+def append(all):
+    all_list.append(all)
+    return(all_list)
+def output(total):    
+    import pandas as pd
+    df = pd.DataFrame(total)
+    df.to_csv("Index.csv",encoding='utf-8-Sig',index=False)
+def main(n):
+    A=n
+    all=(A*A)
+    return all
+def multiprocess():
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        for result in executor.map(main, link_list, chunksize=5000):
+            # retrieve the result
+            total.append(result)
+    #         # print(result)
+    return total
+
+if __name__ == "__main__":
+    import time
+    all_list = []
+    Href_list=[]
+    total=[]
+    total2=[]
+    start_time_2 = time.time()
+    link_list = input("NumberIndex.xlsx")#匯入檔案名稱
+    # for link in link_list[0:]:#10為執行筆數69757
+    #     Href_list.append(link)
+    multiprocess()
+    print(len(total))
+    output(total)
+    print ("Process pool execution in " + str(time.time() - start_time_2), "seconds")
