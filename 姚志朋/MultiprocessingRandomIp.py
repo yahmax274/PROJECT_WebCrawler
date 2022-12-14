@@ -7,15 +7,31 @@ def MultiProcess(n,m,Ip):
             except:
                 continue 
     return total
-def MultiProcess1(n,m,Ip):
+def MultiProcessOld(n,m,Ip):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(Main, link,Ip) for link in Href_list[n:m]]
+        executor.shutdown(wait=False)
         for future in concurrent.futures.as_completed(futures):
             try:
                 total.append(future.result())
             except:
                 error.append("ReadTimeOut")
-                continue    
+                continue  
+    return total
+def MultiProcessNew(n,m,Ip):
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(Main, link,Ip) for link in Href_list[n:m]]
+        executor.shutdown(wait=False)
+        try:
+            for future in concurrent.futures.as_completed(futures):
+                if "https" in (future.result()) :
+                    error.append(future.result())
+                    total.append(future.result())
+                else:   
+                    total.append(future.result())
+        except:
+            print("null")  
+            pass
     return total
 ##----------####-----RandomIP-----####----------##
 def IpCollect():#收集IP步驟1
@@ -23,7 +39,7 @@ def IpCollect():#收集IP步驟1
     import requests
     import re
     proxy_ips=[]
-    response = requests.get("https://www.sslproxies.org/")
+    response = requests.get("https://www.us-proxy.org/")
     proxy_ips = re.findall('\d+\.\d+\.\d+\.\d+:\d+', response.text) 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(IpCheck, link) for link in proxy_ips]
@@ -33,8 +49,8 @@ def IpCollect():#收集IP步驟1
             except:
                 continue 
     print("收集到的IP數量:",len(IpUseable))
-    IpReCollect()
-    return IpUseable
+    IpGet=IpReCollect()
+    return IpGet
 def IpCheck(ip):#收集IP步驟2
     import requests
     # Useable=""
@@ -237,11 +253,11 @@ if __name__ == '__main__':
     Ip=IpCollect()
     print("IP_Len:",len(Ip))
     check=0
-    Set_Number=500#一次執行數量
+    Set_Number=20#一次執行數量
     n=0
     m=Set_Number+n
     while m<Index:
-        if len(total)>200:
+        if len(total)>50:
             break
         if check>5:
             #爬蟲被發現時結束程式
@@ -266,7 +282,9 @@ if __name__ == '__main__':
                 print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - start))
                 print("暫存一次")
                 Output(total)
-        MultiProcess1(n,m,Ip)
+        ##改變function
+        MultiProcessNew(n,m,Ip)
+        # MultiProcessOld(n,m,Ip)
         time.sleep(5)
         n=m
         m=m+Set_Number
@@ -274,7 +292,7 @@ if __name__ == '__main__':
         check=check+1
         Check_list.append(len(total))
         continue
-    print("遺失數：",(check*Set_Number)-len(error))
+    print("遺失數：",(check*Set_Number)-len(total))
     Output(total)
     end = time.time() # 結束測量執行時間
     end_time = time.ctime(end)
