@@ -30,7 +30,7 @@ def MultiProcessNew(n,m,Ip):
                 else:   
                     total.append(future.result())
         except:
-            print("null")  
+            print("Running....")
             pass
     return total
 ##----------####-----RandomIP-----####----------##
@@ -39,7 +39,8 @@ def IpCollect():#收集IP步驟1
     import requests
     import re
     proxy_ips=[]
-    response = requests.get("https://www.us-proxy.org/")
+    response = requests.get("https://www.us-proxy.org/")##美國IP，穩定度高
+    # response = requests.get("https://www.sslproxies.org/")##SSL IP
     proxy_ips = re.findall('\d+\.\d+\.\d+\.\d+:\d+', response.text) 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(IpCheck, link) for link in proxy_ips]
@@ -252,6 +253,10 @@ if __name__ == '__main__':
     Index=CcIndex()
     Ip=IpCollect()
     print("IP_Len:",len(Ip))
+    if len(Ip)==0:
+        time.sleep(60)
+        print("休息1分鐘")
+        Ip=IpCollect()
     check=0
     Set_Number=20#一次執行數量
     n=0
@@ -279,6 +284,10 @@ if __name__ == '__main__':
                 Ip.clear()
                 Ip=IpCollect()
                 print("IP_Len:",len(Ip))
+                if len(Ip)==0:
+                    time.sleep(60)
+                    print("休息1分鐘")
+                    Ip=IpCollect()
                 print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - start))
                 print("暫存一次")
                 Output(total)
