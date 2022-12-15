@@ -217,7 +217,8 @@ if __name__ == '__main__':
     n=0
     m=Set_Number+n
     Index=CcIndex()
-    while m<51:
+#     while m<Index:
+    while m<101:
         if check>5:
             #每執行20次重抓Ip
             if check%20==0:
