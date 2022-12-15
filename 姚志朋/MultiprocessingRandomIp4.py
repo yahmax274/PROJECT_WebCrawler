@@ -180,10 +180,10 @@ def DataCollect(link,proxy_ip):#主函式，抓取資料
             act_list=act
             index = type_list+"|"+brand_list+"|"+name_list+"|"+price_list+"|"+date_list+"|"+spec_list+"|"+act_list
         except:
-            index=url
+            index="null"
             pass
     except:
-        index="NoResponse"
+        index=url
         pass
     raw_data = [index]
     df = pd.DataFrame(raw_data, columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
