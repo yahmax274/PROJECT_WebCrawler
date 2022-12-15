@@ -71,7 +71,7 @@ def Input(file):#匯入Excel資料
     column = ws['A']
     link_list = [column[x].value for x in range(len(column))]
     return (link_list) 
-def Main(link,proxy_ip):#主函式
+def DataCollect(link,proxy_ip):#主函式，抓取資料
     import requests
     from bs4 import BeautifulSoup
     import datetime
@@ -82,169 +82,159 @@ def Main(link,proxy_ip):#主函式
     delay_choices = [1,2,3,4,5]  #延遲的秒數
     delay = random.choice(delay_choices)
     time.sleep(delay)
-    a=0
     url = link
     ip=proxy_ip
     user_agent = UserAgent()
     headers={ 'user-agent': user_agent.random }
     try:
         re = requests.get(url,headers=headers, timeout=10,proxies={'http': f'{ip}', 'https': f'{ip}'})
-        # re = requests.get(url,headers=headers, timeout=10)
         soup = BeautifulSoup(re.text,"html.parser")
-        #type
+            #type
         types = soup.find_all("div",{"id":"bt_2_layout_NAV"})
-        for type in types:
-            type = type.text
-            type = type.replace(" ","")
-            type = type.split("\n")
-            type = type[2:]
-            if type == []:
-                continue
-            else:
-                a=1
+        if types != []:
+            for type in types:
+                type = type.text
+                type = type.replace(" ","")
+                type = type.split("\n")
+                type = type[2:] 
                 for i in range(4):  
                     if type[i] == "":
                         type[i] ="null"
-                type = type[0]+"|"+type[1]+"|"+type[2]+"|"+type[3]+"|"+type[4]
-                type_list=type
-                
-        #brand
-        brand = soup.find("a",{"class":"webBrandLink"}).get_text()
-        brand_list=brand
-        #item_name
-        name = soup.find("span",{"id":"osmGoodsName"}).get_text()
-        name_list=name
-        #prices
-        prices = soup.find_all("ul",class_ = "prdPrice")
-        if prices ==[]:
-                price = "null|null|null"
-                price_list=price
-        else:
-            for price in prices:
-                price = price.text
-                price = price.replace(" ","")
-                price = price.split("\n")
-                price = [i.strip() for i in price if i.strip()!=""]
-                price_1 =""
-                price_2 =""
-                price_3 =""
-                for i in range(len(price)):
-                    if price_1 =="null" or price_1 =="":
-                        if "市售價" in price[i]:
-                            price_1 = price[i]
-                            price_1 = price_1[3:]
-                            price_1 = price_1.replace("元","")   
-                            price_1 = price_1.replace(",","")
-                        else:
-                            price_1 = "null"
-                    if price_2 =="null" or price_2 =="":
-                        if "促銷價" in price[i]:
-                            price_2 = price[i]
-                            price_2 = price_2[3:]
-                            price_2 = price_2.replace("元","")
-                            price_2 = price_2.replace("賣貴通報","")
-                            price_2 = price_2.replace("下單再折","")
-                            price_2 = price_2.replace(",","")
-                        else:
-                            price_2 = "null"  
-                    if price_3 =="null" or price_3 =="":
-                        if "折扣後價格" in price[i]:
-                            price_3 = price[i]
-                            price_3 = price_3[5:]
-                            price_3 = price_3.replace("元賣貴通報","")
-                            price_3 = price_3.replace(",","") 
-                        else:
-                            price_3 = "null"  
-                price = price_1+"|"+price_2+"|"+price_3
-                price_list=price
-        #date
-        date = datetime.date.today()
-        date = str(date)
-        date = date.replace("-","")
-        date_list=date
-        #spec
-        spec = soup.find("div",class_ = "vendordetailview specification").get_text()
-        spec = spec.replace("\n","")
-        spec = spec.replace(" ","")
-        spec = spec.strip("TOP")
-        spec_list=spec
-        #act
-        try:
-            act = soup.find("ul",class_ = "ineventArea").text
-            act = act.replace(" ","")
-            act = act.replace("\n","")
-            act = act.replace("\xa0","")
-            act = act.split("(說明)")
-            act = act[:2]
-            if act[1] =="":
-                act = act[0]+"|null"
+                type = type[0]+"|"+type[1]+"|"+type[2]+"|"+type[3]+"|"+type[4] 
+                type_list=type  
+        try:     
+            #brand
+            brand = soup.find("a",{"class":"webBrandLink"}).get_text()
+            brand_list=brand
+            #item_name
+            name = soup.find("span",{"id":"osmGoodsName"}).get_text()
+            name_list=name
+            #prices
+            prices = soup.find_all("ul",class_ = "prdPrice")
+            if prices ==[]:
+                    price = "null|null|null"
+                    price_list=price
             else:
-                act = act[0] +"|"+ act[1]       
+                for price in prices:
+                    price = price.text
+                    price = price.replace(" ","")
+                    price = price.split("\n")
+                    price = [i.strip() for i in price if i.strip()!=""]
+                    price_1 =""
+                    price_2 =""
+                    price_3 =""
+                    for i in range(len(price)):
+                        if price_1 =="null" or price_1 =="":
+                            if "市售價" in price[i]:
+                                price_1 = price[i]
+                                price_1 = price_1[3:]
+                                price_1 = price_1.replace("元","")   
+                                price_1 = price_1.replace(",","")
+                            else:
+                                price_1 = "null"
+                        if price_2 =="null" or price_2 =="":
+                            if "促銷價" in price[i]:
+                                price_2 = price[i]
+                                price_2 = price_2[3:]
+                                price_2 = price_2.replace("元","")
+                                price_2 = price_2.replace("賣貴通報","")
+                                price_2 = price_2.replace("下單再折","")
+                                price_2 = price_2.replace(",","")
+                            else:
+                                price_2 = "null"  
+                        if price_3 =="null" or price_3 =="":
+                            if "折扣後價格" in price[i]:
+                                price_3 = price[i]
+                                price_3 = price_3[5:]
+                                price_3 = price_3.replace("元賣貴通報","")
+                                price_3 = price_3.replace(",","") 
+                            else:
+                                price_3 = "null"  
+                    price = price_1+"|"+price_2+"|"+price_3
+                    price_list=price
+            #date
+            date = datetime.date.today()
+            date = str(date)
+            date = date.replace("-","")
+            date_list=date
+            #spec
+            spec = soup.find("div",class_ = "vendordetailview specification").get_text()
+            spec = spec.replace("\n","")
+            spec = spec.replace(" ","")
+            spec = spec.strip("TOP")
+            spec_list=spec
+            #act
+            try:
+                act = soup.find("ul",class_ = "ineventArea").text
+                act = act.replace(" ","")
+                act = act.replace("\n","")
+                act = act.replace("\xa0","")
+                act = act.split("(說明)")
+                act = act[:2]
+                if act[1] =="":
+                    act = act[0]+"|null"
+                else:
+                    act = act[0] +"|"+ act[1]       
+            except:
+                act = "null|null"
+            act_list=act
+            index = type_list+"|"+brand_list+"|"+name_list+"|"+price_list+"|"+date_list+"|"+spec_list+"|"+act_list
         except:
-            act = "null|null"
-        act_list=act
+            index=url
+            pass
     except:
         index="NoResponse"
         pass
-    if a==1:
-        index = type_list+"|"+brand_list+"|"+name_list+"|"+price_list+"|"+date_list+"|"+spec_list+"|"+act_list
-    else:
-        index="null"
-
     raw_data = [index]
     df = pd.DataFrame(raw_data, columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
-    df.to_csv('data.csv', mode='a', index=False, header=False,encoding='utf-8-Sig')
+    df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
     return index
-def MultiProcess1(link,proxy_ip):  
+def MultiProcess1(link,proxy_ip):#平行處理主函式
     import concurrent.futures
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-    # with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(Main,link,proxy_ip) 
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        executor.map(DataCollect,link,proxy_ip) 
         executor.shutdown(wait=False)
+def CcIndex():
+    Index=len(Href_list)+Set_Number
+    return Index
 if __name__ == '__main__':
     import time
     import os
     import pandas as pd
     import random
-    if os.path.exists('data.csv'):
-        os.remove('data.csv')
+    Href_list = Input('./網址/3Ckey.xlsx')#匯入檔案名稱
+    save_file_name="3Ckey.csv"#設定存檔名稱
+    if os.path.exists(save_file_name):#刪除舊資料
+        os.remove(save_file_name)
         raw_data = ["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"]
         df = pd.DataFrame(raw_data)
-        df.to_csv('data.csv', mode='a', index=False, header=False,encoding='utf-8-Sig')
+        df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
     start = time.time() # 開始測量執行時間
     collector = IPCollector()
     filtered_ips = collector.collect_and_check_ip()
-    print(filtered_ips)
-    Href_list = Input('./網址/保健_食品key.xlsx')#匯入檔案名稱
     check=0
-    Set_Number=20#一次執行數量
+    Set_Number=20#設定一次執行數量
     n=0
     m=Set_Number+n
-    total=[]
-    Check_list=[]
-    while m<101:
-        # if len(total)>50:
-        #     break
+    Index=CcIndex()
+    while m<51:
         if check>5:
-            #爬蟲被發現時結束程式
-            if ((Check_list[check-1]+Check_list[check-2]+Check_list[check-3])/3)==Check_list[check-1]:
-                break
-
-            #每執行10次暫時存檔
+            #每執行20次重抓Ip
+            if check%20==0:
+                collector = IPCollector()
+                filtered_ips = collector.collect_and_check_ip()
+            #每執行10次休息10秒
             if check%10==0:
-                now = time.time()
-                print("執行第",check*Set_Number,"次時間為 %f 秒" % (now - start))
-                print("暫存一次")
-        ##改變function
+                time.sleep(10)
         link = Href_list[n:m]
         proxy_ip=[]
         for i in range(len(link)):
             proxy_ip.append(random.choice(filtered_ips))
         MultiProcess1(link,proxy_ip)
         time.sleep(5)
+        print("執行",m,"筆資料")
         n=m
         m=m+Set_Number
-        print(m)
         check=check+1
         continue
     end = time.time() # 結束測量執行時間
