@@ -20,8 +20,7 @@ def DataCollect(link):#主函式，抓取資料
     time.sleep(delay)
     url = link
     user_agent = UserAgent()
-    # headers={ 'user-agent': user_agent.random }
-    headers={ 'user-agent': user_agent.chrome}
+    headers={ 'user-agent': user_agent.random }
     try:
         re = requests.get(url,headers=headers, timeout=10)
         soup = BeautifulSoup(re.text,"html.parser")
@@ -130,7 +129,7 @@ def DataCollect(link):#主函式，抓取資料
 def MultiProcess1(link):#平行處理主函式
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(DataCollect,link) 
+        executor.map(DataCollect,link,chunksize=100) 
         executor.shutdown(wait=False)
 def CcIndex():
     Index=len(Href_list)+Set_Number
@@ -151,8 +150,8 @@ if __name__ == '__main__':
     import time
     import os
     import pandas as pd
-    Href_list = Input('./網址/3Ckey.xlsx')#匯入檔案名稱
-    save_file_name="3Ckey.csv"#設定存檔名稱
+    Href_list = Input('./網址/旅遊戶外key.xlsx')#匯入檔案名稱
+    save_file_name="旅遊戶外key.csv"#設定存檔名稱
     Create_and_delete_file(save_file_name)
     start = time.time() # 開始測量執行時間
     check=0
@@ -160,7 +159,7 @@ if __name__ == '__main__':
     n=0
     m=Set_Number+n
     Index=CcIndex()
-    while m<51:
+    while m<101:
         if check>5:
             #每執行10次休息10秒
             if check%10==0:
