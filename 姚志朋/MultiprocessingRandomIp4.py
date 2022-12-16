@@ -194,7 +194,7 @@ def DataCollect(link,proxy_ip):#主函式，抓取資料
 def MultiProcess1(link,proxy_ip):#平行處理主函式
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(DataCollect,link,proxy_ip) 
+        executor.map(DataCollect,link,proxy_ip,chunksize=50) 
         executor.shutdown(wait=False)
 def CcIndex():
     Index=len(Href_list)+Set_Number
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     n=0
     m=Set_Number+n
     Index=CcIndex()
-    while m<51:
+    while m<101:
         if check>5:
             #每執行20次重抓Ip
             if check%20==0:
