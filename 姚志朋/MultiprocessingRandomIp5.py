@@ -135,19 +135,25 @@ def MultiProcess1(link):#平行處理主函式
 def CcIndex():
     Index=len(Href_list)+Set_Number
     return Index
+def Create_and_delete_file(save_file_name):#建立和刪除舊有檔案
+    if os.path.exists(save_file_name):#刪除舊資料
+        os.remove(save_file_name)
+        raw_data = ["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"]
+        df = pd.DataFrame(raw_data)
+        df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
+    else:
+        raw_data = ["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"]
+        df = pd.DataFrame(raw_data)
+        df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
+    if os.path.exists("TimeoutURL.csv"):#刪除舊資料
+        os.remove("TimeoutURL.csv")
 if __name__ == '__main__':
     import time
     import os
     import pandas as pd
     Href_list = Input('./網址/3Ckey.xlsx')#匯入檔案名稱
     save_file_name="3Ckey.csv"#設定存檔名稱
-    if os.path.exists(save_file_name):#刪除舊資料
-        os.remove(save_file_name)
-        raw_data = ["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"]
-        df = pd.DataFrame(raw_data)
-        df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
-    if os.path.exists("TimeoutURL.csv"):#刪除舊資料
-        os.remove("TimeoutURL.csv")
+    Create_and_delete_file(save_file_name)
     start = time.time() # 開始測量執行時間
     check=0
     Set_Number=20#設定一次執行數量

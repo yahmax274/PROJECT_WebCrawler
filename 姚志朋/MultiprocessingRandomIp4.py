@@ -55,7 +55,7 @@ class IPCollector:#收集虛擬IP
         try:
             result = requests.get('https://www.momoshop.com.tw/main/Main.jsp',
                     proxies={'http': ip, 'https': ip},
-                    timeout=10,
+                    timeout=5,
                     headers=headers)
             if result.status_code==200:
                 return ip
@@ -199,20 +199,26 @@ def MultiProcess1(link,proxy_ip):#平行處理主函式
 def CcIndex():
     Index=len(Href_list)+Set_Number
     return Index
-if __name__ == '__main__':
-    import time
-    import os
-    import pandas as pd
-    import random
-    Href_list = Input('./網址/3Ckey.xlsx')#匯入檔案名稱
-    save_file_name="3Ckey.csv"#設定存檔名稱
+def Create_and_delete_file(save_file_name):#建立和刪除舊有檔案
     if os.path.exists(save_file_name):#刪除舊資料
         os.remove(save_file_name)
         raw_data = ["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"]
         df = pd.DataFrame(raw_data)
         df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
+    else:
+        raw_data = ["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"]
+        df = pd.DataFrame(raw_data)
+        df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
     if os.path.exists("TimeoutURL.csv"):#刪除舊資料
         os.remove("TimeoutURL.csv")
+if __name__ == '__main__':
+    import time
+    import os
+    import pandas as pd
+    import random
+    Href_list = Input('./網址/旅遊戶外key.xlsx')#匯入檔案名稱
+    save_file_name="旅遊戶外key.csv"#設定存檔名稱
+    Create_and_delete_file(save_file_name)
     start = time.time() # 開始測量執行時間
     collector = IPCollector()
     filtered_ips = collector.collect_and_check_ip()
@@ -221,7 +227,7 @@ if __name__ == '__main__':
     n=0
     m=Set_Number+n
     Index=CcIndex()
-    while m<101:
+    while m<51:
         if check>5:
             #每執行20次重抓Ip
             if check%20==0:
