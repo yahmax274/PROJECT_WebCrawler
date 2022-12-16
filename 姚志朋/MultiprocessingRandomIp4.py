@@ -183,12 +183,14 @@ def DataCollect(link,proxy_ip):#主函式，抓取資料
             index="null"
             pass
     except:
-        index=url
+        raw_data = [url]
+        df = pd.DataFrame(raw_data, columns=[""])
+        df.to_csv("TimeoutURL.csv", mode='a', index=False, header=False,encoding='utf-8-Sig')
         pass
     raw_data = [index]
     df = pd.DataFrame(raw_data, columns=["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"])
     df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
-    return index
+    return None
 def MultiProcess1(link,proxy_ip):#平行處理主函式
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -209,6 +211,8 @@ if __name__ == '__main__':
         raw_data = ["app|big|mid|small|category|brand|item_name|market_price|sale_price|discount_price|date|item_specification|act"]
         df = pd.DataFrame(raw_data)
         df.to_csv(save_file_name, mode='a', index=False, header=False,encoding='utf-8-Sig')
+    if os.path.exists("TimeoutURL.csv"):#刪除舊資料
+        os.remove("TimeoutURL.csv")
     start = time.time() # 開始測量執行時間
     collector = IPCollector()
     filtered_ips = collector.collect_and_check_ip()
@@ -217,7 +221,6 @@ if __name__ == '__main__':
     n=0
     m=Set_Number+n
     Index=CcIndex()
-#     while m<Index:
     while m<101:
         if check>5:
             #每執行20次重抓Ip
