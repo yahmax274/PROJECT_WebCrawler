@@ -20,7 +20,8 @@ def DataCollect(link):#主函式，抓取資料
     time.sleep(delay)
     url = link
     user_agent = UserAgent()
-    headers={ 'user-agent': user_agent.random }
+    # headers={ 'user-agent': user_agent.random }
+    headers={ 'user-agent': user_agent.chrome}
     try:
         re = requests.get(url,headers=headers, timeout=10)
         soup = BeautifulSoup(re.text,"html.parser")
