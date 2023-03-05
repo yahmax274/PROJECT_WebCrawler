@@ -1,3 +1,4 @@
+##讀取整篇文章，進行摘要
 import torch
 import jieba
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
@@ -9,11 +10,14 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model.to(device)
 
 # 讀取文本
+#存在txt檔中
 with open("input.txt", "r", encoding="utf-8") as f:
     input_text = f.read()
 
-# 進行文本摘要
+#存在程式中
 # input_text = "蘋果很好吃，爸爸覺得蘋果很好吃，媽媽覺得蘋果很好吃，我覺得蘋果很好吃，弟弟覺得蘋果很好吃。"
+
+# 進行文本摘要
 input_segmented = "".join(jieba.cut(input_text))
 input_ids = tokenizer.encode(input_segmented, return_tensors="pt").to(device)
 output = model.generate(
