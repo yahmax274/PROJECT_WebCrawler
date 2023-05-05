@@ -17,3 +17,7 @@ OutputTest.py  輸出結果
 1.Getdata.py  隨機獲取200筆留言
 2.CkipNewModel.py  開始訓練
 3.OutputTest.py  模型測試
+
+訓練資料來源:
+NLPLab
+https://github.com/Chunshan-Theta/NLPLab/tree/master/Crawler/CrawlerToBooking
