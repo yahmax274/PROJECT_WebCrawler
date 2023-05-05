@@ -11,3 +11,9 @@ OutputTest.py  輸出結果
 執行順序
 1.BasicSkills4.py
 2.OutputTest.py
+---------------
+
+05/05更新
+1.Getdata.py  隨機獲取200筆留言
+2.CkipNewModel.py  開始訓練
+3.OutputTest.py  模型測試
